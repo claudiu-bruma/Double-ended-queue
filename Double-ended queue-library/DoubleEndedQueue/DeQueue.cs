@@ -21,9 +21,13 @@ namespace Double_ended_queue.DoubleEndedQueue
             {
                 throw new InvalidOperationException("no more items to pop");
             }
+            T poppedElement;
+            lock (innerContainer)
+            {
+                poppedElement = innerContainer.Last.Value;
+                innerContainer.RemoveLast();
+            }
 
-            var poppedElement = innerContainer.Last.Value;
-            innerContainer.RemoveLast();
             return poppedElement;
         }
         public T PopFront()
@@ -33,18 +37,29 @@ namespace Double_ended_queue.DoubleEndedQueue
                 throw new InvalidOperationException("no more items to pop");
             }
 
-            var poppedElement = innerContainer.First.Value;
+            T poppedElement;
+            lock (innerContainer)
+            {
+                poppedElement = innerContainer.First.Value;
+            }
             innerContainer.RemoveFirst();
             return poppedElement;
         }
 
         public void PushFront(T newElement)
         {
-            innerContainer.AddFirst(newElement);
+            lock (innerContainer)
+            {
+                innerContainer.AddFirst(newElement);
+            }
+           
         }
         public void PushBack(T newElement)
         {
-            innerContainer.AddLast(newElement);
+            lock (innerContainer)
+            {
+                innerContainer.AddLast(newElement);
+            }
         }
 
         public T PeekFront()
